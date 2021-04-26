@@ -27,48 +27,42 @@ ramdisk_compression=auto;
 dump_boot;
 
 ui_print " "
-ui_print " - Mounting system and vendor"
-ui_print " "
+ui_print " Mounting system and vendor..."
 mount -o rw,remount /system
 mount -o rw,remount /vendor
 
 ui_print " "
-ui_print " - Backuping /system/build.prop to /system/build.prop.bak"
-ui_print " "
+ui_print " Backuping /system/build.prop to /system/build.prop.bak..."
 cp /system/build.prop /system/build.prop.bak
 
 ui_print " "
-ui_print " - Change value in /system/build.prop for fix error on device boot"
-ui_print " "
+ui_print " Change value in /system/build.prop for fix error on device boot..."
 sed -i 's/ro.treble.enabled=true/ro.treble.enabled=false/g' /system/build.prop
 
 
-#Install Magisk Module & Other
-ui_print " - Installing Magisk Module for Automaticly Activate (insmod) All Modules (*.ko-files) at Start Your Android"
+#Install Magisk Module
+ui_print " "
+ui_print " Installing Magisk Module..."
 
 cp -rf AutoInsmodModules /data/adb/modules
 
-UNAME=$(ls /tmp/anykernel/modules/system/lib/modules/)
-NH_SYSTEM=/data/local/nhsystem
-
+#Kernel headers
 if
-	test -d $NH_SYSTEM
+    [ -f /tmp/anykernel/kernel-headers.tar.xz ]
 then
-	if
-		test -d $NH_SYSTEM/kali-arm64
-	then
-		NH_PATH=$NH_SYSTEM/kali-arm64
-	else
-		NH_PATH=$NH_SYSTEM/kali-armhf
-	fi
-	mkdir -p $NH_PATH/lib/modules/
-	cp -rf /tmp/anykernel/modules/system/lib/modules/$UNAME $NH_PATH/lib/modules/
-	mkdir -p $NH_PATH/usr/src/$UNAME
-	unzip /tmp/anykernel/kernel-headers.tar.xz -d $NH_PATH/usr/src/$UNAME
-	chmod 777 -R $NH_PATH/lib/modules/$UNAME
-	chmod 777 -R $NH_PATH/usr/src/$UNAME
+    ui_print " "
+    ui_print " Installing Kernel Headers..."
+    UNAME=$(ls /tmp/anykernel/modules/system/lib/modules/)
+    NH_SYSTEM=/data/local/nhsystem
+    for NH_PATH in $(ls $NH_SYSTEM)
+    do NH_LIB=$NH_PATH/usr/lib/modules
+    rm -rf $NH_LIB/*
+    cp -r /tmp/anykernel/modules/system/lib/modules/$UNAME $NH_LIB
+    mkdir -p $NH_LIB/build
+    tar -xJf /tmp/anykernel/kernel-headers.tar.xz $NH_LIB/build
+    done
 else
-	sleep 0
+sleep 0
 fi
 
 write_boot;
