@@ -26,6 +26,13 @@ ramdisk_compression=auto;
 ## AnyKernel install
 dump_boot;
 
+#Remove Old Modules
+ui_print " "
+ui_print " "
+ui_print "Removing Old Modules..."
+rm -rf /system/lib/modules
+rm -rf /vendor/lib/modules
+
 #Install Magisk Module
 ui_print " "
 ui_print " "
@@ -35,15 +42,14 @@ cp -rf /tmp/anykernel/AutoInsmodModules /data/adb/modules
 
 #Kernel headers
 if
-    [ -f /tmp/anykernel/headers.tar.xz ]
+    [ -f /tmp/anykernel/headers.zip ]
 then
     ui_print " "
     ui_print " "
     ui_print "Installing Kernel Headers..."
     UNAME=$(ls /tmp/anykernel/modules/system/lib/modules/)
-    NH_SYSTEM=/data/local/nhsystem
-    for NH_PATH in $(ls $NH_SYSTEM)
-    do NH_LIB=$NH_SYSTEM/$NH_PATH/usr/lib/modules
+    NH_SYSTEM=/data/local/nhsystem/*
+    NH_LIB=$NH_SYSTEM/usr/lib/modules
     rm -rf $NH_LIB/*
     cp -r /tmp/anykernel/modules/system/lib/modules/$UNAME $NH_LIB
     mkdir -p $NH_LIB/$UNAME/build
