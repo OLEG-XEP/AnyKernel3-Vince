@@ -4,7 +4,7 @@
 ## AnyKernel setup
 # begin properties
 properties() { '
-kernel.string=Immortal Kernel with Full NetHunter Support by @D_L_Neron Based on StormBreaker 4.9.241
+kernel.string=
 do.devicecheck=0
 do.modules=1
 do.systemless=1
